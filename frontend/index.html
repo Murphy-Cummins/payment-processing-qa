@@ -3,6 +3,14 @@
 
 <head>
 
+    <!--
+    Document Information
+    -->
+
+    <!--
+    Defines the character encoding used by the webpage
+    -->
+
     <meta charset="UTF-8">
 
     <meta
@@ -10,8 +18,14 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <!--
+    Titling
+    -->
     <title>Payment Processing Center</title>
 
+    <!--
+    linking the css sheet for styling
+    -->
     <link
         rel="stylesheet"
         href="style.css"
@@ -26,6 +40,9 @@
 
         <div class="header-content">
 
+            <!--
+            Logo for the webpage
+            -->
             <div class="logo">
                 Payment Processing Center
             </div>
@@ -47,6 +64,11 @@
         ========================================= -->
 
         <section class="card">
+            <!--
+            Section with all the test customers
+            User is able to click the user they would like to have
+            the information to populate from.
+            -->
 
             <h2>🧪 Test Customers</h2>
 
@@ -75,6 +97,11 @@
              CUSTOMER VERIFICATION
         ========================================= -->
 
+        <!--
+        Client will be verified where they are entered into the database
+        User will be able to enter other information used if they would like
+        to manually enter it.
+        -->
         <section class="card">
 
             <h2>Customer Verification</h2>
@@ -140,6 +167,10 @@
              CUSTOMER DETAILS
         ========================================= -->
 
+        <!--
+        Customer wil only use if they exsist in the database 
+        and the correct information was entered
+        -->
         <section
             id="customerDetails"
             class="card hidden"
@@ -195,6 +226,11 @@
              PAYMENT
         ========================================= -->
 
+        <!--
+        The user is only able to enter a payment into 
+        the payment section if the client has been entered
+        correctly.
+        -->
         <section
             id="paymentSection"
             class="card hidden"
@@ -242,6 +278,10 @@
              PAYMENT RESULT
         ========================================= -->
 
+        <!--
+        The payment will show in the payment section
+        It will randomly show if it is "pending", "failed", or "posted".
+        -->
         <section
             id="paymentResult"
             class="card hidden"
