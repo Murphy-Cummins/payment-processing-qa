@@ -1,10 +1,18 @@
+//
+// IMPORT DEPENDENCIES
+//
+
 const express = require("express");
 const path = require("path");
-
 const db = require("./database");
 
+
+// Create Express application.
 const app = express();
 
+
+// Use the PORT provided by the hosting environment.
+// Use 3000 when running locally.
 const PORT = process.env.PORT || 3000;
 
 
@@ -15,13 +23,17 @@ MIDDLEWARE
 ========================================
 */
 
+// Allow Express to read JSON request bodies.
 app.use(express.json());
 
+
+// Serve the frontend files.
 app.use(
     express.static(
         path.join(__dirname, "../frontend")
     )
 );
+
 
 
 /*
@@ -42,6 +54,57 @@ app.get("/", (req, res) => {
 });
 
 
+
+/*
+========================================
+RANDOM TEST CUSTOMERS
+========================================
+*/
+
+// Return three random fictional customers
+// from the Customers database table.
+//
+// This endpoint is used by the frontend to
+// display convenient test customers.
+app.get("/api/test-customers", (req, res) => {
+
+    const sql = `
+        SELECT
+            CompanyName,
+            ContactName,
+            CustomerCode
+        FROM Customers
+        ORDER BY RANDOM()
+        LIMIT 3
+    `;
+
+
+    db.all(sql, [], (err, customers) => {
+
+        if (err) {
+
+            console.error(
+                "Test customer lookup error:",
+                err.message
+            );
+
+            return res.status(500).json({
+                error: "Unable to load test customers."
+            });
+
+        }
+
+
+        res.json({
+            customers: customers
+        });
+
+    });
+
+});
+
+
+
 /*
 ========================================
 CUSTOMER LOOKUP
@@ -54,6 +117,7 @@ app.post("/api/lookup", (req, res) => {
     const code = req.body.code;
 
 
+    // Make sure both values were provided.
     if (!name || !code) {
 
         return res.status(400).json({
@@ -63,6 +127,7 @@ app.post("/api/lookup", (req, res) => {
     }
 
 
+    // Customer code must contain exactly three digits.
     if (!/^\d{3}$/.test(code)) {
 
         return res.status(400).json({
@@ -72,6 +137,8 @@ app.post("/api/lookup", (req, res) => {
     }
 
 
+    // Use parameterized SQL so user input
+    // is never directly inserted into SQL.
     const sql = `
         SELECT
             CustomerID,
@@ -104,6 +171,7 @@ app.post("/api/lookup", (req, res) => {
             }
 
 
+            // No matching customer.
             if (!customer) {
 
                 return res.status(404).json({
@@ -114,6 +182,7 @@ app.post("/api/lookup", (req, res) => {
             }
 
 
+            // QA console message.
             console.log(
                 `[QA] Customer verified | ` +
                 `${customer.CompanyName} | ` +
@@ -122,6 +191,7 @@ app.post("/api/lookup", (req, res) => {
             );
 
 
+            // Return verified customer information.
             res.json({
                 customer: customer
             });
@@ -130,6 +200,7 @@ app.post("/api/lookup", (req, res) => {
     );
 
 });
+
 
 
 /*
@@ -147,6 +218,7 @@ app.post("/api/payment", (req, res) => {
         Number(req.body.amount);
 
 
+    // Validate customer ID.
     if (
         !Number.isInteger(customerID) ||
         customerID <= 0
@@ -159,6 +231,7 @@ app.post("/api/payment", (req, res) => {
     }
 
 
+    // Validate payment amount.
     if (
         !Number.isFinite(amount) ||
         amount <= 0
@@ -171,6 +244,7 @@ app.post("/api/payment", (req, res) => {
     }
 
 
+    // Maximum payment amount.
     if (amount > 1000000) {
 
         return res.status(400).json({
@@ -181,6 +255,9 @@ app.post("/api/payment", (req, res) => {
     }
 
 
+    // Look up the customer on the server.
+    //
+    // The browser's account number is NEVER trusted.
     const sql = `
         SELECT
             CustomerID,
@@ -221,6 +298,7 @@ app.post("/api/payment", (req, res) => {
             }
 
 
+            // Random demonstration payment status.
             const statuses = [
                 "Posted",
                 "Pending",
@@ -237,6 +315,7 @@ app.post("/api/payment", (req, res) => {
                 ];
 
 
+            // Insert payment into database.
             const insertSQL = `
                 INSERT INTO Payments
                 (
@@ -281,6 +360,7 @@ app.post("/api/payment", (req, res) => {
                     }
 
 
+                    // QA troubleshooting log.
                     console.log(
                         `[QA] Payment ${this.lastID} | ` +
                         `${customer.CompanyName} | ` +
@@ -312,6 +392,7 @@ app.post("/api/payment", (req, res) => {
 
                             Status:
                                 status
+
                         }
 
                     });
@@ -325,6 +406,7 @@ app.post("/api/payment", (req, res) => {
 });
 
 
+
 /*
 ========================================
 START SERVER
@@ -332,7 +414,9 @@ START SERVER
 */
 
 app.listen(PORT, "0.0.0.0", () => {
+
     console.log(
         `Payment Processing app running on port ${PORT}`
     );
+
 });

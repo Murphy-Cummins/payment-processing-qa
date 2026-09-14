@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,38 +10,28 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        Financial Services Payment Center
-    </title>
+    <title>Payment Processing Center</title>
 
     <link
         rel="stylesheet"
-        href="./style.css"
+        href="style.css"
     >
+
 </head>
+
 
 <body>
 
-    <!-- HEADER -->
-
     <header>
 
-        <div class="header-container">
+        <div class="header-content">
 
             <div class="logo">
-                FS
+                Payment Processing Center
             </div>
 
-            <div>
-
-                <h1>
-                    Financial Services
-                </h1>
-
-                <p>
-                    Payment Center
-                </p>
-
+            <div class="subtitle">
+                Secure Payment Portal
             </div>
 
         </div>
@@ -48,256 +39,225 @@
     </header>
 
 
-    <!-- MAIN CONTENT -->
-
-    <main>
-
-        <!-- INTRO -->
-
-        <section class="intro">
-
-            <p class="eyebrow">
-                CUSTOMER PAYMENT PORTAL
-            </p>
-
-            <h2>
-                Make a Payment
-            </h2>
-
-            <p>
-                Enter your information below to locate
-                your account and make a payment.
-            </p>
-
-        </section>
+    <main class="container">
 
 
-        <!-- CUSTOMER VERIFICATION -->
+        <!-- ========================================
+             TEST CUSTOMERS
+        ========================================= -->
 
         <section class="card">
 
-            <h3>
-                Customer Verification
-            </h3>
+            <h2>🧪 Test Customers</h2>
 
-            <p class="description">
-                Enter your name and three-digit customer code.
+            <p>
+                Use one of the fictional customers below
+                to quickly test the payment workflow.
             </p>
 
 
-            <label for="customerName">
-                Name
-            </label>
-
-            <input
-                type="text"
-                id="customerName"
-                placeholder="First Name, Last Name"
-                autocomplete="name"
+            <div
+                id="testCustomers"
+                class="test-customers"
             >
 
-
-            <label for="customerCode">
-                Customer Code
-            </label>
-
-            <input
-                type="text"
-                id="customerCode"
-                maxlength="3"
-                inputmode="numeric"
-                placeholder="000"
-            >
-
-
-            <button
-                type="button"
-                id="lookupButton"
-            >
-                Find Account
-            </button>
-
-        </section>
-
-
-        <!-- CUSTOMER DETAILS -->
-
-        <section
-            id="customerDetails"
-            class="card hidden"
-        >
-
-            <div class="verified">
-                ✓ Account Verified
-            </div>
-
-            <h3>
-                Account Information
-            </h3>
-
-
-            <div class="info-row">
-
-                <span>
-                    Company
-                </span>
-
-                <strong id="companyName">
-                    —
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Customer Code
-                </span>
-
-                <strong id="displayCode">
-                    —
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Account Number
-                </span>
-
-                <strong id="accountNumber">
-                    —
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Contact
-                </span>
-
-                <strong id="displayContact">
-                    —
-                </strong>
+                <p>
+                    Loading test customers...
+                </p>
 
             </div>
 
         </section>
 
 
-        <!-- PAYMENT -->
 
-        <section
-            id="paymentSection"
-            class="card hidden"
-        >
+        <!-- ========================================
+             CUSTOMER VERIFICATION
+        ========================================= -->
 
-            <h3>
-                Payment
-            </h3>
+        <section class="card">
 
-            <p class="description">
-                Enter the amount you would like to pay.
+            <h2>Customer Verification</h2>
+
+            <p>
+                Enter your name and three-digit customer
+                code to access your payment account.
             </p>
 
 
-            <label for="amount">
-                Payment Amount
-            </label>
+            <div class="form-group">
 
-
-            <div class="amount-input">
-
-                <span>
-                    $
-                </span>
+                <label for="customerName">
+                    Contact Name
+                </label>
 
                 <input
-                    type="number"
-                    id="amount"
-                    min="0.01"
-                    max="1000000"
-                    step="0.01"
-                    placeholder="0.00"
+                    type="text"
+                    id="customerName"
+                    placeholder="Enter your name"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="customerCode">
+                    Customer Code
+                </label>
+
+                <input
+                    type="text"
+                    id="customerCode"
+                    placeholder="3-digit code"
+                    maxlength="3"
+                    inputmode="numeric"
+                    autocomplete="off"
                 >
 
             </div>
 
 
             <button
+                id="lookupButton"
                 type="button"
-                id="submitPayment"
             >
-                Submit Payment
+                Verify Customer
             </button>
+
+
+            <p
+                id="lookupError"
+                class="error"
+            ></p>
 
         </section>
 
 
-        <!-- PAYMENT RESULT -->
+
+        <!-- ========================================
+             CUSTOMER DETAILS
+        ========================================= -->
+
+        <section
+            id="customerDetails"
+            class="card hidden"
+        >
+
+            <h2>Verified Customer</h2>
+
+
+            <div class="details-grid">
+
+                <div>
+
+                    <strong>Company</strong>
+
+                    <span id="companyName"></span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>Customer Code</strong>
+
+                    <span id="displayCode"></span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>Account Number</strong>
+
+                    <span id="accountNumber"></span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>Contact</strong>
+
+                    <span id="displayContact"></span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ========================================
+             PAYMENT
+        ========================================= -->
+
+        <section
+            id="paymentSection"
+            class="card hidden"
+        >
+
+            <h2>Make a Payment</h2>
+
+
+            <div class="form-group">
+
+                <label for="amount">
+                    Payment Amount
+                </label>
+
+                <input
+                    type="number"
+                    id="amount"
+                    placeholder="0.00"
+                    min="0.01"
+                    max="1000000"
+                    step="0.01"
+                >
+
+            </div>
+
+
+            <button
+                id="submitPayment"
+                type="button"
+            >
+                Submit Payment
+            </button>
+
+
+            <p
+                id="paymentError"
+                class="error"
+            ></p>
+
+        </section>
+
+
+
+        <!-- ========================================
+             PAYMENT RESULT
+        ========================================= -->
 
         <section
             id="paymentResult"
             class="card hidden"
         >
 
-            <h3>
-                Payment Result
-            </h3>
+            <h2>Payment Result</h2>
 
-
-            <div id="resultContent">
-            </div>
+            <div id="resultContent"></div>
 
         </section>
 
-
-        <!-- SECURITY NOTICE -->
-
-        <section class="card">
-
-            <div class="verified">
-                ✓ Secure Demonstration
-            </div>
-
-            <h3>
-                Secure Payment Processing
-            </h3>
-
-            <p class="description">
-                This is a demonstration application created
-                for QA testing. No real payment information
-                is collected or processed.
-            </p>
-
-        </section>
 
     </main>
 
 
-    <!-- FOOTER -->
-
-    <footer>
-
-        <p>
-            Financial Services Payment Center
-        </p>
-
-        <p>
-            Demonstration application for QA testing
-        </p>
-
-    </footer>
-
-
-    <!-- JAVASCRIPT -->
-
-    <script src="./script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 

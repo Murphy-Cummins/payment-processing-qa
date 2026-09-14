@@ -1,391 +1,581 @@
+/*
+========================================
+GLOBAL STYLES
+========================================
+*/
+
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 
 body {
+    margin: 0;
+
     font-family:
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
+        Roboto,
         Arial,
         sans-serif;
 
-    background: #f4f7fb;
+    background: #f1f5f9;
 
-    color: #1f2937;
+    color: #1e293b;
 
-    min-height: 100vh;
+    line-height: 1.5;
 }
 
 
-/* =====================================
-   HEADER
-   ===================================== */
+button,
+input {
+    font-family: inherit;
+}
+
+
+
+/*
+========================================
+HEADER
+========================================
+*/
 
 header {
-    background: white;
+    background: #0f2747;
 
-    border-bottom: 1px solid #e5e7eb;
+    color: white;
 
-    padding: 20px;
+    border-bottom: 4px solid #2563eb;
 }
 
 
-.header-container {
-    max-width: 850px;
+.header-content {
+    max-width: 1100px;
 
-    margin: auto;
+    margin: 0 auto;
 
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
+    padding: 24px 25px;
 }
 
 
 .logo {
-    width: 44px;
-    height: 44px;
+    font-size: 24px;
 
-    background: #2563eb;
+    font-weight: 700;
 
-    color: white;
+    letter-spacing: -0.3px;
+}
 
+
+.subtitle {
+    margin-top: 3px;
+
+    color: #cbd5e1;
+
+    font-size: 14px;
+}
+
+
+
+/*
+========================================
+MAIN CONTAINER
+========================================
+*/
+
+.container {
+    width: 100%;
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    padding: 35px 25px 60px;
+}
+
+
+
+/*
+========================================
+CARDS
+========================================
+*/
+
+.card {
+    background: white;
+
+    border: 1px solid #dbe3ec;
+
+    border-radius: 10px;
+
+    margin-bottom: 22px;
+
+    padding: 28px;
+
+    box-shadow:
+        0 2px 5px rgba(15, 39, 71, 0.04);
+}
+
+
+.card h2 {
+    margin: 0 0 8px;
+
+    color: #0f2747;
+
+    font-size: 21px;
+
+    font-weight: 650;
+}
+
+
+.card > p {
+    margin-top: 0;
+
+    margin-bottom: 22px;
+
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+
+
+/*
+========================================
+TEST CUSTOMERS
+========================================
+*/
+
+.test-customers {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-top: 20px;
+}
+
+
+.test-customer {
     display: flex;
 
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
 
-    border-radius: 8px;
+    min-height: 190px;
 
-    font-weight: bold;
+    padding: 20px;
+
+    background: #f8fafc;
+
+    border: 1px solid #dbe3ec;
+
+    border-radius: 9px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
 }
 
 
-.header-container h1 {
-    font-size: 18px;
+.test-customer:hover {
+    border-color: #93c5fd;
+
+    box-shadow:
+        0 5px 15px rgba(15, 39, 71, 0.08);
+
+    transform: translateY(-2px);
 }
 
 
-.header-container p {
-    color: #6b7280;
+.test-customer strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #0f2747;
+
+    font-size: 17px;
+
+    font-weight: 650;
+}
+
+
+.test-customer span {
+    margin-bottom: 15px;
+
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+
+.test-customer small {
+    display: block;
+
+    margin-top: auto;
+
+    color: #64748b;
 
     font-size: 13px;
 }
 
 
-/* =====================================
-   MAIN
-   ===================================== */
-
-main {
-    max-width: 700px;
-
-    margin: auto;
-
-    padding: 45px 20px 60px;
-}
-
-
-.intro {
-    margin-bottom: 25px;
-}
-
-
-.eyebrow {
-    color: #2563eb;
-
-    font-size: 12px;
-
-    font-weight: bold;
-
-    letter-spacing: 1px;
-
-    margin-bottom: 8px;
-}
-
-
-.intro h2 {
-    font-size: 30px;
-
-    margin-bottom: 8px;
-}
-
-
-.intro p:last-child {
-    color: #6b7280;
-}
-
-
-/* =====================================
-   CARDS
-   ===================================== */
-
-.card {
-    background: white;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 10px;
-
-    padding: 25px;
-
-    margin-bottom: 20px;
-
-    box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.05);
-}
-
-
-.card h3 {
-    margin-bottom: 6px;
-
-    font-size: 18px;
-}
-
-
-.description {
-    color: #6b7280;
+.test-customer small b {
+    color: #0f2747;
 
     font-size: 14px;
 
+    letter-spacing: 1px;
+}
+
+
+.test-customer button {
+    width: 100%;
+
+    margin-top: 14px;
+
+    padding: 10px 14px;
+
+    background: white;
+
+    color: #1d4ed8;
+
+    border: 1px solid #2563eb;
+
+    border-radius: 6px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.test-customer button:hover {
+    background: #2563eb;
+
+    color: white;
+}
+
+
+.test-customer button:active {
+    transform: translateY(1px);
+}
+
+
+
+/*
+========================================
+FORM
+========================================
+*/
+
+.form-group {
     margin-bottom: 20px;
 }
 
 
-/* =====================================
-   FORM
-   ===================================== */
-
-label {
+.form-group label {
     display: block;
+
+    margin-bottom: 7px;
+
+    color: #334155;
 
     font-size: 14px;
 
     font-weight: 600;
-
-    margin-top: 18px;
-
-    margin-bottom: 7px;
 }
 
 
-input {
+.form-group input {
     width: 100%;
 
-    height: 46px;
+    max-width: 500px;
 
-    border: 1px solid #d1d5db;
+    padding: 12px 14px;
 
-    border-radius: 7px;
+    background: white;
 
-    padding: 0 12px;
+    color: #1e293b;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 6px;
+
+    outline: none;
 
     font-size: 15px;
 
-    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 
-input:focus {
+.form-group input::placeholder {
+    color: #94a3b8;
+}
+
+
+.form-group input:focus {
     border-color: #2563eb;
 
     box-shadow:
-        0 0 0 3px
-        rgba(37, 99, 235, 0.12);
+        0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 
-/* =====================================
-   BUTTONS
-   ===================================== */
 
-button {
-    width: 100%;
+/*
+========================================
+BUTTONS
+========================================
+*/
 
-    height: 46px;
-
-    margin-top: 20px;
-
-    border: none;
-
-    border-radius: 7px;
+#lookupButton,
+#submitPayment {
+    padding: 11px 22px;
 
     background: #2563eb;
 
     color: white;
 
+    border: none;
+
+    border-radius: 6px;
+
     font-size: 14px;
 
-    font-weight: 700;
+    font-weight: 600;
 
     cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 
-button:hover {
+#lookupButton:hover,
+#submitPayment:hover {
     background: #1d4ed8;
+
+    box-shadow:
+        0 3px 8px rgba(37, 99, 235, 0.25);
 }
 
 
-button:disabled {
-    opacity: 0.6;
+#lookupButton:active,
+#submitPayment:active {
+    transform: translateY(1px);
+}
+
+
+#lookupButton:disabled,
+#submitPayment:disabled {
+    background: #94a3b8;
 
     cursor: not-allowed;
+
+    box-shadow: none;
 }
 
 
-/* =====================================
-   ACCOUNT INFORMATION
-   ===================================== */
 
-.verified {
-    display: inline-block;
+/*
+========================================
+VERIFIED CUSTOMER DETAILS
+========================================
+*/
 
-    background: #d1fae5;
+#customerDetails {
+    border-top: 4px solid #2563eb;
+}
 
-    color: #047857;
 
-    padding: 5px 10px;
+.details-grid {
+    display: grid;
 
-    border-radius: 20px;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-top: 20px;
+}
+
+
+.details-grid > div {
+    padding: 17px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 7px;
+}
+
+
+.details-grid strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #64748b;
 
     font-size: 12px;
 
-    font-weight: bold;
+    font-weight: 600;
 
-    margin-bottom: 15px;
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
 }
 
 
-.info-row,
-.result-row {
-    display: flex;
+.details-grid span {
+    display: block;
 
-    justify-content: space-between;
+    color: #0f2747;
 
-    align-items: center;
+    font-size: 15px;
 
-    gap: 20px;
+    font-weight: 600;
+}
 
-    padding: 13px 0;
 
-    border-bottom: 1px solid #e5e7eb;
+
+/*
+========================================
+PAYMENT SECTION
+========================================
+*/
+
+#paymentSection {
+    border-top: 4px solid #0f2747;
+}
+
+
+#amount {
+    max-width: 300px;
+}
+
+
+
+/*
+========================================
+PAYMENT RESULT
+========================================
+*/
+
+#paymentResult {
+    border-top: 4px solid #16a34a;
+}
+
+
+.payment-summary {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    margin-top: 18px;
+}
+
+
+.payment-summary p {
+    margin: 0;
+
+    padding: 15px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 7px;
+
+    color: #475569;
 
     font-size: 14px;
 }
 
 
-.info-row:last-child,
-.result-row:last-child {
-    border-bottom: none;
+.payment-summary strong {
+    color: #0f2747;
 }
 
 
-.info-row span,
-.result-row span {
-    color: #6b7280;
+
+/*
+========================================
+ERROR MESSAGES
+========================================
+*/
+
+.error {
+    margin-top: 12px;
+
+    margin-bottom: 0;
+
+    color: #b91c1c;
+
+    font-size: 14px;
+
+    font-weight: 500;
 }
 
 
-.info-row strong,
-.result-row strong {
-    text-align: right;
-}
 
-
-/* =====================================
-   AMOUNT
-   ===================================== */
-
-.amount-input {
-    position: relative;
-}
-
-
-.amount-input span {
-    position: absolute;
-
-    left: 12px;
-
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    color: #6b7280;
-
-    font-weight: 600;
-}
-
-
-.amount-input input {
-    padding-left: 28px;
-}
-
-
-/* =====================================
-   HIDDEN
-   ===================================== */
+/*
+========================================
+HIDDEN ELEMENTS
+========================================
+*/
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 
-/* =====================================
-   RESULT
-   ===================================== */
 
-#paymentResult h3 {
-    color: #047857;
-}
+/*
+========================================
+RESPONSIVE DESIGN
+========================================
+*/
 
+@media (max-width: 800px) {
 
-/* =====================================
-   FOOTER
-   ===================================== */
-
-footer {
-    background: white;
-
-    border-top: 1px solid #e5e7eb;
-
-    text-align: center;
-
-    padding: 25px;
-
-    color: #6b7280;
-
-    font-size: 12px;
-}
-
-
-footer p:first-child {
-    font-weight: 600;
-
-    margin-bottom: 3px;
-}
-
-
-/* =====================================
-   MOBILE
-   ===================================== */
-
-@media (max-width: 600px) {
-
-    main {
-        padding:
-            30px 15px 45px;
+    .test-customers {
+        grid-template-columns:
+            1fr;
     }
 
 
-    .intro h2 {
-        font-size: 26px;
+    .details-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .container {
+        padding: 20px 15px 40px;
     }
 
 
@@ -394,19 +584,26 @@ footer p:first-child {
     }
 
 
-    .info-row,
-    .result-row {
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        gap: 3px;
+    .logo {
+        font-size: 20px;
     }
 
 
-    .info-row strong,
-    .result-row strong {
-        text-align: left;
+    .details-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .payment-summary {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    #lookupButton,
+    #submitPayment {
+        width: 100%;
     }
 
 }

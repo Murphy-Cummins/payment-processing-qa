@@ -1,16 +1,18 @@
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    () => {
 
 
-        console.log(
-            "[QA] Payment portal loaded."
-        );
+        /*
+        ========================================
+        GET HTML ELEMENTS
+        ========================================
+        */
 
-
-        // =====================================
-        // GET ELEMENTS
-        // =====================================
+        const testCustomers =
+            document.getElementById(
+                "testCustomers"
+            );
 
         const customerName =
             document.getElementById(
@@ -25,6 +27,11 @@ document.addEventListener(
         const lookupButton =
             document.getElementById(
                 "lookupButton"
+            );
+
+        const lookupError =
+            document.getElementById(
+                "lookupError"
             );
 
         const customerDetails =
@@ -67,6 +74,11 @@ document.addEventListener(
                 "submitPayment"
             );
 
+        const paymentError =
+            document.getElementById(
+                "paymentError"
+            );
+
         const paymentResult =
             document.getElementById(
                 "paymentResult"
@@ -78,20 +90,153 @@ document.addEventListener(
             );
 
 
-        // =====================================
-        // CURRENT CUSTOMER
-        // =====================================
+
+        /*
+        ========================================
+        CURRENT CUSTOMER
+        ========================================
+        */
 
         let currentCustomerID = null;
 
 
-        // =====================================
-        // FIND ACCOUNT
-        // =====================================
+
+        /*
+        ========================================
+        LOAD RANDOM TEST CUSTOMERS
+        ========================================
+        */
+
+        function loadTestCustomers() {
+
+            fetch("./api/test-customers")
+
+                .then(response => {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Unable to load test customers."
+                        );
+
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(data => {
+
+                    testCustomers.innerHTML = "";
+
+
+                    data.customers.forEach(
+                        customer => {
+
+                            const customerCard =
+                                document.createElement(
+                                    "div"
+                                );
+
+                            customerCard.className =
+                                "test-customer";
+
+
+                            customerCard.innerHTML = `
+
+                                <strong>
+                                    ${customer.ContactName}
+                                </strong>
+
+                                <span>
+                                    ${customer.CompanyName}
+                                </span>
+
+                                <small>
+                                    Customer Code:
+                                    <b>${customer.CustomerCode}</b>
+                                </small>
+
+                                <button
+                                    type="button"
+                                    class="use-customer"
+                                >
+                                    Use This Customer
+                                </button>
+
+                            `;
+
+
+                            const useButton =
+                                customerCard.querySelector(
+                                    ".use-customer"
+                                );
+
+
+                            useButton.addEventListener(
+                                "click",
+                                () => {
+
+                                    customerName.value =
+                                        customer.ContactName;
+
+                                    customerCode.value =
+                                        customer.CustomerCode;
+
+
+                                    lookupError.textContent =
+                                        "";
+
+
+                                    // Put the cursor in
+                                    // the Verify button.
+                                    lookupButton.focus();
+
+                                }
+                            );
+
+
+                            testCustomers.appendChild(
+                                customerCard
+                            );
+
+                        }
+                    );
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "[QA] Test customer loading error:",
+                        error
+                    );
+
+
+                    testCustomers.innerHTML = `
+                        <p class="error">
+                            Test customers could not be loaded.
+                        </p>
+                    `;
+
+                });
+
+        }
+
+
+
+        /*
+        ========================================
+        CUSTOMER LOOKUP
+        ========================================
+        */
 
         lookupButton.addEventListener(
             "click",
-            function () {
+            () => {
+
+                lookupError.textContent = "";
+
 
                 const name =
                     customerName.value.trim();
@@ -100,101 +245,96 @@ document.addEventListener(
                     customerCode.value.trim();
 
 
-                console.log(
-                    "[QA] Looking up customer:",
-                    name,
-                    code
-                );
-
-
-                // Check name
-
+                // Validate name.
                 if (!name) {
 
-                    alert(
-                        "Please enter your name."
-                    );
+                    lookupError.textContent =
+                        "Please enter your name.";
 
                     return;
+
                 }
 
 
-                // Check customer code
-
+                // Validate three-digit code.
                 if (!/^\d{3}$/.test(code)) {
 
-                    alert(
-                        "Customer code must be exactly 3 digits."
-                    );
+                    lookupError.textContent =
+                        "Customer code must be exactly 3 digits.";
 
                     return;
+
                 }
 
 
                 lookupButton.disabled = true;
 
                 lookupButton.textContent =
-                    "Finding Account...";
+                    "Verifying...";
 
 
-                fetch(
-                    "./api/lookup",
-                    {
+                fetch("./api/lookup", {
 
-                        method: "POST",
+                    method: "POST",
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                        body: JSON.stringify({
+                    body: JSON.stringify({
 
-                            name: name,
+                        name: name,
 
-                            code: code
+                        code: code
 
-                        })
-                    }
-                )
+                    })
 
-                .then(
-                    function (response) {
+                })
+
+                    .then(response => {
 
                         return response.json()
-                            .then(
-                                function (data) {
+                            .then(data => ({
 
-                                    if (
-                                        !response.ok
-                                    ) {
+                                ok:
+                                    response.ok,
 
-                                        throw new Error(
-                                            data.error
-                                        );
+                                data:
+                                    data
 
-                                    }
+                            }));
 
-                                    return data;
+                    })
 
-                                }
+                    .then(result => {
+
+                        if (!result.ok) {
+
+                            throw new Error(
+                                result.data.error ||
+                                "Customer verification failed."
                             );
 
-                    }
-                )
+                        }
 
-                .then(
-                    function (data) {
 
                         const customer =
-                            data.customer;
+                            result.data.customer;
 
+
+                        /*
+                        Store only the database
+                        customer ID.
+
+                        The server will look up the
+                        account number itself when
+                        the payment is submitted.
+                        */
 
                         currentCustomerID =
                             customer.CustomerID;
 
-
-                        // Populate account
 
                         companyName.textContent =
                             customer.CompanyName;
@@ -209,242 +349,255 @@ document.addEventListener(
                             customer.ContactName;
 
 
-                        // Show sections
+                        customerDetails.classList.remove(
+                            "hidden"
+                        );
 
-                        customerDetails
-                            .classList
-                            .remove("hidden");
-
-                        paymentSection
-                            .classList
-                            .remove("hidden");
+                        paymentSection.classList.remove(
+                            "hidden"
+                        );
 
 
                         console.log(
-                            "[QA] Customer verified."
+                            `[QA] Customer verified | ` +
+                            `${customer.CompanyName} | ` +
+                            `Contact: ${customer.ContactName} | ` +
+                            `Account: ${customer.AccountNumber}`
                         );
 
-                    }
-                )
+                    })
 
-                .catch(
-                    function (error) {
+                    .catch(error => {
 
-                        console.error(
-                            "[QA] Lookup error:",
-                            error
+                        lookupError.textContent =
+                            error.message;
+
+                        customerDetails.classList.add(
+                            "hidden"
                         );
 
-                        alert(
-                            error.message
+                        paymentSection.classList.add(
+                            "hidden"
                         );
 
-                    }
-                )
+                        currentCustomerID = null;
 
-                .finally(
-                    function () {
+                    })
 
-                        lookupButton.disabled =
-                            false;
+                    .finally(() => {
+
+                        lookupButton.disabled = false;
 
                         lookupButton.textContent =
-                            "Find Account";
+                            "Verify Customer";
 
-                    }
-                );
+                    });
 
             }
         );
 
 
-        // =====================================
-        // SUBMIT PAYMENT
-        // =====================================
+
+        /*
+        ========================================
+        PAYMENT SUBMISSION
+        ========================================
+        */
 
         submitPayment.addEventListener(
             "click",
-            function () {
+            () => {
 
-                const paymentAmount =
-                    Number(
-                        amount.value
-                    );
+                paymentError.textContent = "";
 
 
                 if (!currentCustomerID) {
 
-                    alert(
-                        "Please verify your account first."
-                    );
+                    paymentError.textContent =
+                        "Please verify a customer first.";
 
                     return;
+
                 }
 
 
+                const paymentAmount =
+                    Number(amount.value);
+
+
+                // Validate payment amount.
                 if (
-                    !Number.isFinite(
-                        paymentAmount
-                    ) ||
+                    !Number.isFinite(paymentAmount) ||
                     paymentAmount <= 0
                 ) {
 
-                    alert(
-                        "Please enter a valid payment amount."
-                    );
+                    paymentError.textContent =
+                        "Please enter a valid payment amount.";
 
                     return;
+
                 }
 
 
-                submitPayment.disabled =
-                    true;
+                // Client-side maximum.
+                if (paymentAmount > 1000000) {
+
+                    paymentError.textContent =
+                        "Payment cannot exceed $1,000,000.";
+
+                    return;
+
+                }
+
+
+                submitPayment.disabled = true;
 
                 submitPayment.textContent =
                     "Processing...";
 
 
-                fetch(
-                    "./api/payment",
-                    {
+                fetch("./api/payment", {
 
-                        method: "POST",
+                    method: "POST",
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                        body: JSON.stringify({
+                    body: JSON.stringify({
 
-                            customerID:
-                                currentCustomerID,
+                        customerID:
+                            currentCustomerID,
 
-                            amount:
-                                paymentAmount
+                        amount:
+                            paymentAmount
 
-                        })
-                    }
-                )
+                    })
 
-                .then(
-                    function (response) {
+                })
+
+                    .then(response => {
 
                         return response.json()
-                            .then(
-                                function (data) {
+                            .then(data => ({
 
-                                    if (
-                                        !response.ok
-                                    ) {
+                                ok:
+                                    response.ok,
 
-                                        throw new Error(
-                                            data.error
-                                        );
+                                data:
+                                    data
 
-                                    }
+                            }));
 
-                                    return data;
+                    })
 
-                                }
+                    .then(result => {
+
+                        if (!result.ok) {
+
+                            throw new Error(
+                                result.data.error ||
+                                "Payment could not be processed."
                             );
 
-                    }
-                )
+                        }
 
-                .then(
-                    function (data) {
 
                         const payment =
-                            data.payment;
+                            result.data.payment;
 
+
+                        /*
+                        Display the result.
+                        */
 
                         resultContent.innerHTML = `
 
-                            <div class="result-row">
-                                <span>Company</span>
-                                <strong>
+                            <div class="payment-summary">
+
+                                <p>
+                                    <strong>Company:</strong>
                                     ${payment.CompanyName}
-                                </strong>
-                            </div>
+                                </p>
 
-                            <div class="result-row">
-                                <span>Account</span>
-                                <strong>
+                                <p>
+                                    <strong>Account:</strong>
                                     ${payment.AccountNumber}
-                                </strong>
-                            </div>
+                                </p>
 
-                            <div class="result-row">
-                                <span>Amount</span>
-                                <strong>
-                                    $${Number(
-                                        payment.Amount
-                                    ).toFixed(2)}
-                                </strong>
-                            </div>
+                                <p>
+                                    <strong>Amount:</strong>
+                                    $${payment.Amount.toFixed(2)}
+                                </p>
 
-                            <div class="result-row">
-                                <span>Status</span>
-                                <strong>
+                                <p>
+                                    <strong>Status:</strong>
                                     ${payment.Status}
-                                </strong>
+                                </p>
+
                             </div>
 
                         `;
 
 
-                        paymentResult
-                            .classList
-                            .remove("hidden");
+                        paymentResult.classList.remove(
+                            "hidden"
+                        );
 
+
+                        /*
+                        QA console log.
+                        */
 
                         console.log(
                             `[QA] Payment ${payment.PaymentID} | ` +
                             `${payment.CompanyName} | ` +
                             `Contact: ${payment.ContactName} | ` +
                             `Account: ${payment.AccountNumber} | ` +
-                            `Amount: $${Number(
-                                payment.Amount
-                            ).toFixed(2)} | ` +
+                            `Amount: $${payment.Amount.toFixed(2)} | ` +
                             `Status: ${payment.Status.toUpperCase()}`
                         );
 
 
+                        // Clear payment amount.
                         amount.value = "";
 
-                    }
-                )
+                    })
 
-                .catch(
-                    function (error) {
+                    .catch(error => {
 
-                        console.error(
-                            "[QA] Payment error:",
-                            error
-                        );
+                        paymentError.textContent =
+                            error.message;
 
-                        alert(
-                            error.message
-                        );
+                    })
 
-                    }
-                )
+                    .finally(() => {
 
-                .finally(
-                    function () {
-
-                        submitPayment.disabled =
-                            false;
+                        submitPayment.disabled = false;
 
                         submitPayment.textContent =
                             "Submit Payment";
 
-                    }
-                );
+                    });
 
             }
         );
+
+
+
+        /*
+        ========================================
+        INITIALIZE PAGE
+        ========================================
+        */
+
+        console.log(
+            "[QA] Payment portal loaded."
+        );
+
+
+        loadTestCustomers();
 
     }
 );
