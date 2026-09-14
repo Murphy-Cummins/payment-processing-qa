@@ -1,5 +1,10 @@
 //
 // IMPORT DEPENDENCIES
+/*
+express - simplify the process of building web apps and REST APIs.
+path - utility used to handle and manipulate file and dir paths.
+database - databases we created (Paymenmts, schema)
+*/
 //
 
 const express = require("express");
@@ -7,7 +12,7 @@ const path = require("path");
 const db = require("./database");
 
 
-// Create Express application.
+// Create express application
 const app = express();
 
 
@@ -41,9 +46,22 @@ app.use(
 HOME PAGE
 ========================================
 */
+/*
+Handle requests to the app's home page.
+Express runs route localhost:3000 and sends the frontend
+index.html file back to the user's web page.
+*/
 
 app.get("/", (req, res) => {
 
+    /*
+    Send index.html file as the response
+    __dirname refers to the backend folder.
+
+    "../frontend/index.html" moves up one folder
+    and then into the frontend folder to locate
+    the app's main file.
+    */
     res.sendFile(
         path.join(
             __dirname,
@@ -61,11 +79,13 @@ RANDOM TEST CUSTOMERS
 ========================================
 */
 
-// Return three random fictional customers
-// from the Customers database table.
-//
-// This endpoint is used by the frontend to
-// display convenient test customers.
+/*
+Return three random fictional customers
+from the Customers database table.
+This endpoint is used by the frontend to
+display convenient test customers.
+*/
+
 app.get("/api/test-customers", (req, res) => {
 
     const sql = `
@@ -79,6 +99,9 @@ app.get("/api/test-customers", (req, res) => {
     `;
 
 
+    /*
+    Display the errors to the console for QA Troubleshooting.
+    */
     db.all(sql, [], (err, customers) => {
 
         if (err) {
@@ -117,7 +140,11 @@ app.post("/api/lookup", (req, res) => {
     const code = req.body.code;
 
 
-    // Make sure both values were provided.
+    /*
+    Make sure both values were provided.
+    Confirm with QA testing that all other chars
+    (&*@Y$#*, one name, etc) pulls this error
+    */
     if (!name || !code) {
 
         return res.status(400).json({
@@ -137,8 +164,10 @@ app.post("/api/lookup", (req, res) => {
     }
 
 
-    // Use parameterized SQL so user input
-    // is never directly inserted into SQL.
+    /* Use parameterized SQL so user input
+    is never directly inserted into SQL.
+    */
+
     const sql = `
         SELECT
             CustomerID,
@@ -151,6 +180,9 @@ app.post("/api/lookup", (req, res) => {
         AND LOWER(ContactName) = LOWER(?)
     `;
 
+    /*
+    Display the error in the console where the user cannot see
+    */
 
     db.get(
         sql,
@@ -182,7 +214,11 @@ app.post("/api/lookup", (req, res) => {
             }
 
 
-            // QA console message.
+            /*
+            QA console message.
+            Shows the client pulled from the database.
+            */
+
             console.log(
                 `[QA] Customer verified | ` +
                 `${customer.CompanyName} | ` +
@@ -411,6 +447,11 @@ app.post("/api/payment", (req, res) => {
 ========================================
 START SERVER
 ========================================
+*/
+/*
+Server will be able to opened in the local browser
+port:3000 or with web depolyment
+https://payment-processing-qa-1.onrender.com
 */
 
 app.listen(PORT, "0.0.0.0", () => {
