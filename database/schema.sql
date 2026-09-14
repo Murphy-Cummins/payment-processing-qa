@@ -34,4 +34,5 @@ VALUES
     ('Horizon Capital Group', '10007', '925', 'Amanda Wilson'),
     ('Evergreen Financial LLC', '10008', '641', 'Daniel Moore'),
     ('Silver Oak Lending', '10009', '358', 'Jessica Taylor'),
-    ('Westbridge Financial', '10010', '807', 'Matthew Anderson');
+    ('Westbridge Financial', '10010', '807', 'Matthew Anderson'),
+    ('Test Company', '10012', '336', 'Grayson Cummins');
