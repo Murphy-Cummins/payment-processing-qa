@@ -1,55 +1,339 @@
-const db = require('./database');
+const express = require("express");
+const path = require("path");
 
-db.serialize(() => {
-    db.run(`
-        CREATE TABLE IF NOT EXISTS Payments (
-            PaymentID INTEGER PRIMARY KEY AUTOINCREMENT,
-            CustomerName TEXT NOT NULL,
-            AccountNumber TEXT NOT NULL,
-            Amount DECIMAL(10,2) NOT NULL,
-            Status TEXT NOT NULL,
-            PaymentDate DATETIME DEFAULT CURRENT_TIMESTAMP
+const db = require("./database");
+
+const app = express();
+
+const PORT = 3000;
+
+
+/*
+========================================
+MIDDLEWARE
+========================================
+*/
+
+app.use(express.json());
+
+app.use(
+    express.static(
+        path.join(__dirname, "../frontend")
+    )
+);
+
+
+/*
+========================================
+HOME PAGE
+========================================
+*/
+
+app.get("/", (req, res) => {
+
+    res.sendFile(
+        path.join(
+            __dirname,
+            "../frontend/index.html"
         )
-    `, (err) => {
-        if (err) {
-            console.error('Error creating table:', err.message);
-        } else {
-            console.log('Payments table created successfully.');
-        }
-    });
+    );
 
-    db.run(`
-        INSERT INTO Payments
-        (CustomerName, AccountNumber, Amount, Status)
-        VALUES (?, ?, ?, ?)
-    `,
-    ['John Smith', '10001', 250.00, 'Posted'],
-    (err) => {
-        if (err) {
-            console.error('Error inserting payment:', err.message);
-        } else {
-            console.log('Test payment added successfully.');
-        }
-    });
-
-    // Retrieve all payments
-    db.all(`
-        SELECT *
-        FROM Payments
-    `, (err, rows) => {
-        if (err) {
-            console.error('Error retrieving payments:', err.message);
-        } else {
-            console.log('Payments:');
-            console.table(rows);
-        }
-    });
 });
 
-db.close((err) => {
-    if (err) {
-        console.error('Error closing database:', err.message);
-    } else {
-        console.log('Database connection closed.');
+
+/*
+========================================
+CUSTOMER LOOKUP
+========================================
+*/
+
+app.post("/api/lookup", (req, res) => {
+
+    const name = req.body.name;
+    const code = req.body.code;
+
+
+    if (!name || !code) {
+
+        return res.status(400).json({
+            error: "Name and customer code are required."
+        });
+
     }
+
+
+    if (!/^\d{3}$/.test(code)) {
+
+        return res.status(400).json({
+            error: "Customer code must be 3 digits."
+        });
+
+    }
+
+
+    const sql = `
+        SELECT
+            CustomerID,
+            CompanyName,
+            AccountNumber,
+            CustomerCode,
+            ContactName
+        FROM Customers
+        WHERE CustomerCode = ?
+        AND LOWER(ContactName) = LOWER(?)
+    `;
+
+
+    db.get(
+        sql,
+        [code, name.trim()],
+        (err, customer) => {
+
+            if (err) {
+
+                console.error(
+                    "Database lookup error:",
+                    err.message
+                );
+
+                return res.status(500).json({
+                    error: "Database error."
+                });
+
+            }
+
+
+            if (!customer) {
+
+                return res.status(404).json({
+                    error:
+                        "Customer name and code could not be verified."
+                });
+
+            }
+
+
+            console.log(
+                `[QA] Customer verified | ` +
+                `${customer.CompanyName} | ` +
+                `Contact: ${customer.ContactName} | ` +
+                `Account: ${customer.AccountNumber}`
+            );
+
+
+            res.json({
+                customer: customer
+            });
+
+        }
+    );
+
+});
+
+
+/*
+========================================
+SUBMIT PAYMENT
+========================================
+*/
+
+app.post("/api/payment", (req, res) => {
+
+    const customerID =
+        Number(req.body.customerID);
+
+    const amount =
+        Number(req.body.amount);
+
+
+    if (
+        !Number.isInteger(customerID) ||
+        customerID <= 0
+    ) {
+
+        return res.status(400).json({
+            error: "Invalid customer."
+        });
+
+    }
+
+
+    if (
+        !Number.isFinite(amount) ||
+        amount <= 0
+    ) {
+
+        return res.status(400).json({
+            error: "Invalid payment amount."
+        });
+
+    }
+
+
+    if (amount > 1000000) {
+
+        return res.status(400).json({
+            error:
+                "Payment cannot exceed $1,000,000."
+        });
+
+    }
+
+
+    const sql = `
+        SELECT
+            CustomerID,
+            CompanyName,
+            AccountNumber,
+            CustomerCode,
+            ContactName
+        FROM Customers
+        WHERE CustomerID = ?
+    `;
+
+
+    db.get(
+        sql,
+        [customerID],
+        (err, customer) => {
+
+            if (err) {
+
+                console.error(
+                    "Database payment lookup error:",
+                    err.message
+                );
+
+                return res.status(500).json({
+                    error: "Database error."
+                });
+
+            }
+
+
+            if (!customer) {
+
+                return res.status(404).json({
+                    error: "Customer not found."
+                });
+
+            }
+
+
+            const statuses = [
+                "Posted",
+                "Pending",
+                "Failed"
+            ];
+
+
+            const status =
+                statuses[
+                    Math.floor(
+                        Math.random() *
+                        statuses.length
+                    )
+                ];
+
+
+            const insertSQL = `
+                INSERT INTO Payments
+                (
+                    CustomerID,
+                    CompanyName,
+                    ContactName,
+                    AccountNumber,
+                    Amount,
+                    Status,
+                    PaymentDate
+                )
+                VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+            `;
+
+
+            db.run(
+                insertSQL,
+
+                [
+                    customer.CustomerID,
+                    customer.CompanyName,
+                    customer.ContactName,
+                    customer.AccountNumber,
+                    amount,
+                    status
+                ],
+
+                function (insertErr) {
+
+                    if (insertErr) {
+
+                        console.error(
+                            "Payment insert error:",
+                            insertErr.message
+                        );
+
+                        return res.status(500).json({
+                            error:
+                                "Unable to save payment."
+                        });
+
+                    }
+
+
+                    console.log(
+                        `[QA] Payment ${this.lastID} | ` +
+                        `${customer.CompanyName} | ` +
+                        `Contact: ${customer.ContactName} | ` +
+                        `Account: ${customer.AccountNumber} | ` +
+                        `Amount: $${amount.toFixed(2)} | ` +
+                        `Status: ${status.toUpperCase()}`
+                    );
+
+
+                    res.json({
+
+                        payment: {
+
+                            PaymentID:
+                                this.lastID,
+
+                            CompanyName:
+                                customer.CompanyName,
+
+                            ContactName:
+                                customer.ContactName,
+
+                            AccountNumber:
+                                customer.AccountNumber,
+
+                            Amount:
+                                amount,
+
+                            Status:
+                                status
+                        }
+
+                    });
+
+                }
+            );
+
+        }
+    );
+
+});
+
+
+/*
+========================================
+START SERVER
+========================================
+*/
+
+app.listen(PORT, () => {
+
+    console.log(
+        `Payment Processing app running at http://localhost:${PORT}`
+    );
+
 });
