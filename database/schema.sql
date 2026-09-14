@@ -1,6 +1,9 @@
 DROP TABLE IF EXISTS Payments;
 DROP TABLE IF EXISTS Customers;
 
+/*
+Creating fields and table for the clients
+*/
 CREATE TABLE Customers (
     CustomerID INTEGER PRIMARY KEY AUTOINCREMENT,
     CompanyName TEXT NOT NULL,
@@ -9,6 +12,10 @@ CREATE TABLE Customers (
     ContactName TEXT NOT NULL
 );
 
+/*
+Creating fields and table for Payments entered
+in the browser.
+*/
 CREATE TABLE Payments (
     PaymentID INTEGER PRIMARY KEY AUTOINCREMENT,
     CustomerID INTEGER NOT NULL,
@@ -22,6 +29,9 @@ CREATE TABLE Payments (
         REFERENCES Customers(CustomerID)
 );
 
+/*
+Add random clients and users into the database
+*/
 INSERT INTO Customers
     (CompanyName, AccountNumber, CustomerCode, ContactName)
 VALUES
