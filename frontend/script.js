@@ -1,3 +1,8 @@
+/*
+Wait until the HTML document has completed loaded before attempting 
+to access the elements.
+*/
+
 document.addEventListener(
     "DOMContentLoaded",
     () => {
@@ -7,6 +12,10 @@ document.addEventListener(
         ========================================
         GET HTML ELEMENTS
         ========================================
+        */
+
+        /*
+        User entered information
         */
 
         const testCustomers =
