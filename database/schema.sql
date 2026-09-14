@@ -35,4 +35,5 @@ VALUES
     ('Evergreen Financial LLC', '10008', '641', 'Daniel Moore'),
     ('Silver Oak Lending', '10009', '358', 'Jessica Taylor'),
     ('Westbridge Financial', '10010', '807', 'Matthew Anderson'),
+    ('Lakeside Mortgage Group', '10011', '496', 'Rachel Adams'),
     ('Test Company', '10012', '336', 'Grayson Cummins');
